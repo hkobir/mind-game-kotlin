@@ -7,6 +7,8 @@ class MemoryGame(private val boardSize: BoardSize) {
 
     val cards: List<MemoryCard>
     var numPairsFound = 0
+
+    private var numCardFlip = 0
     private var indexOfSelectedCard: Int? = null
 
     init {
@@ -15,7 +17,8 @@ class MemoryGame(private val boardSize: BoardSize) {
         cards = randomizedImage.map { MemoryCard(it) }
     }
 
-    fun flipCard(position: Int) :Boolean{
+    fun flipCard(position: Int): Boolean {
+        numCardFlip++
         val card = cards[position]
         //Three Cases//
         //0: Card previously flipped over <> Flipped over the selected card
@@ -53,5 +56,19 @@ class MemoryGame(private val boardSize: BoardSize) {
                 card.isFacedUp = false
             }
         }
+    }
+
+    fun haveWonGame(): Boolean {
+        return numPairsFound == boardSize.getNumPairs()
+    }
+
+    fun isCardFaceUp(position: Int): Boolean {
+        return cards[position].isFacedUp
+
+    }
+
+    fun numMoves(): Int {
+        return numCardFlip / 2
+
     }
 }
