@@ -6,19 +6,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mind_game_kotlin.models.BoardSize
+import com.example.mind_game_kotlin.models.MemoryCard
 import kotlin.math.min
 
 class MemoryAdapter(
     private val context: Context,
     private val boardSize: BoardSize,
-    private val cardImages: List<Int>
+    private val cards: List<MemoryCard>,
+    private val cardClickListener: CardClickListener
 ) :
     RecyclerView.Adapter<MemoryAdapter.ViewHolder>() {
     companion object {
         private const val MARGIN_SIZE = 10
         private const val TAG = "MemoryAdapter"
+    }
+
+    interface CardClickListener {
+        fun onCardClicked(position: Int)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -47,9 +55,13 @@ class MemoryAdapter(
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val cardButton = itemView.findViewById<ImageButton>(R.id.imageButton)
         fun bind(position: Int) {
-            cardButton.setImageResource(cardImages[position])
+            val memoryCard = cards[position];
+            cardButton.setImageResource(if (memoryCard.isFacedUp) cards[position].identifier else R.drawable.ic_launcher_background)
+            cardButton.alpha = if (memoryCard.isMatched) .4f else 1.0f
+            val colorStateList = if(memoryCard.isMatched)ContextCompat.getColorStateList(context,R.color.color_gray) else null
+            ViewCompat.setBackgroundTintList(cardButton,colorStateList)
             cardButton.setOnClickListener {
-
+                cardClickListener.onCardClicked(position)
             }
         }
     }
